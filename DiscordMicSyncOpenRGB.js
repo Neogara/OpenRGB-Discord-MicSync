@@ -9,7 +9,7 @@ const path = require('path');
 
 // Конфигурация приложения
 const config = {
-    CLIENT_ID: '1343891381445201930',
+    CLIENT_ID: process.env.CLIENT_ID,
     CLIENT_SECRET: process.env.CLIENT_SECRET,
 
     REDIRECT_URI: 'http://localhost:3000',
@@ -31,6 +31,11 @@ const ON_COLOR = {red: 0, green: 255, blue: 0};
 
 if (!config.CLIENT_SECRET) {
     console.error('CLIENT_SECRET не найден в secrets.env');
+    process.exit(1);
+}
+
+if (!config.CLIENT_ID) {
+    console.error('CLIENT_ID не найден в secrets.env');
     process.exit(1);
 }
 
