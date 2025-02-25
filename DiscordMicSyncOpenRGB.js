@@ -1,5 +1,5 @@
-require('dotenv').config({ path: './secrets.env' });
-const { RPClient, RPCEvent } = require('rpcord');
+require('dotenv').config({path: './secrets.env'});
+const {RPClient, RPCEvent} = require('rpcord');
 const OpenRGB = require('openrgb-sdk');
 const http = require('http');
 const axios = require('axios');
@@ -11,20 +11,23 @@ const path = require('path');
 const config = {
     CLIENT_ID: '1343891381445201930',
     CLIENT_SECRET: process.env.CLIENT_SECRET,
+
     REDIRECT_URI: 'http://localhost:3000',
-    SERVER_PORT: 3000,
-    TOKEN_FILE: path.join(__dirname, 'discord_token.json'),
-    KEYBOARD_DEVICE_ID: 0,               // ID клавиатурного устройства (как настроено в OpenRGB)
-    MIC_CONTROL_LED_INDEX: 15,           // Индекс LED для управления микрофоном
-    SOUND_CONTROL_LED_INDEX: 14,         // Индекс LED для управления звуком
+    TOKEN_FILE: path.join(__dirname, 'discord_token.json'), // Файл с токеном Discord
+
     RECONNECT_INTERVAL: 5000,            // Интервал переподключения в мс
-    OPENRGB_HOST: 'localhost',
-    OPENRGB_PORT: 6742,
+
+    OPENRGB_HOST: 'localhost', // IP-адрес OpenRGB SDK Server
+    OPENRGB_PORT: 6742,        // Порт OpenRGB SDK Server
+
+    KEYBOARD_DEVICE_ID: 0,  // ID устройства (как настроено в OpenRGB)
+    MIC_CONTROL_LED_INDEX: 15,  // Индекс LED (кнопки) для управления микрофоном
+    SOUND_CONTROL_LED_INDEX: 14, // Индекс LED (кнопки) для управления звуком
 };
 
 // Заданные цвета (ON - включено, OFF - выключено)
-const OFF_COLOR = { red: 255, green: 0, blue: 0 };
-const ON_COLOR = { red: 0, green: 255, blue: 0 };
+const OFF_COLOR = {red: 255, green: 0, blue: 0};
+const ON_COLOR = {red: 0, green: 255, blue: 0};
 
 if (!config.CLIENT_SECRET) {
     console.error('CLIENT_SECRET не найден в secrets.env');
@@ -76,7 +79,7 @@ async function exchangeCodeForToken(code) {
                 code,
                 redirect_uri: config.REDIRECT_URI,
             }),
-            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+            {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
         );
         return response.data;
     } catch (error) {
@@ -104,10 +107,10 @@ async function startAuthServer() {
             try {
                 const tokenData = await exchangeCodeForToken(code);
                 await saveToken(tokenData);
-                res.writeHead(200, { 
-                    'Content-Type': 'text/plain; charset=utf-8', 
-                    'Access-Control-Allow-Origin': '*' 
-                  });
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Access-Control-Allow-Origin': '*'
+                });
                 res.end('Токен получен, можно закрыть вкладку.', 'utf-8');
                 server.close(() => {
                     console.log('Сервер авторизации закрыт.');
@@ -119,7 +122,7 @@ async function startAuthServer() {
             }
         });
 
-        server.listen(config.SERVER_PORT, () => {
+        server.listen(config.AUTH_SERVER_PORT, () => {
             const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${config.CLIENT_ID}&redirect_uri=${encodeURIComponent(
                 config.REDIRECT_URI
             )}&response_type=code&scope=rpc%20rpc.voice.read`;
@@ -144,8 +147,8 @@ async function printAvailableDevices(openrgbClient) {
     for (let deviceId = 0; deviceId < controllerCount; deviceId++) {
         var deviceData = await openrgbClient.getControllerData(deviceId)
         console.log(
-            `${deviceId == config.KEYBOARD_DEVICE_ID? "->":"  " } id: ${deviceData.deviceId} name: ${deviceData.name} (${deviceData.description})`
-        )		
+            `${deviceId === config.KEYBOARD_DEVICE_ID ? "->" : "  "} id: ${deviceData.deviceId} name: ${deviceData.name} (${deviceData.description})`
+        )
     }
     console.log();
 }
@@ -167,7 +170,7 @@ async function connectOpenRGB() {
             await client.connect();
             console.log('Подключено к OpenRGB SDK.');
             await printAvailableDevices(client)
-        
+
             return client;
         } catch (error) {
             console.error('Ошибка подключения к OpenRGB SDK:', error.message);
@@ -192,7 +195,7 @@ async function setKeyColor(openRGBClient, deviceId, colors) {
         let leds = device.colors;
         if (!leds || leds.length === 0) {
             // Если информация о цветах отсутствует, создаём массив нужной длины
-            leds = new Array(device.ledCount).fill({ red: 0, green: 0, blue: 0 });
+            leds = new Array(device.ledCount).fill({red: 0, green: 0, blue: 0});
         } else {
             leds = [...leds]; // Создаём копию массива
         }
@@ -225,7 +228,7 @@ async function setKeyColor(openRGBClient, deviceId, colors) {
  */
 async function startRpc(token, openRGBClient) {
     console.log('Подключение к Discord RPC ...')
-    const rpc = new RPClient(config.CLIENT_ID, { scopes: ['rpc', 'rpc.voice.read'] });
+    const rpc = new RPClient(config.CLIENT_ID, {scopes: ['rpc', 'rpc.voice.read']});
 
     rpc.on('ready', () => console.log('Подключено к Discord RPC!'));
     rpc.on('error', (error) => {
@@ -293,7 +296,7 @@ async function main() {
     if (!tokenData || tokenData.expires_at <= Date.now()) {
         console.log('Нет действительного токена, запускаем авторизацию...');
         const accessToken = await startAuthServer();
-        tokenData = { access_token: accessToken };
+        tokenData = {access_token: accessToken};
     }
 
     // Запускаем Discord RPC

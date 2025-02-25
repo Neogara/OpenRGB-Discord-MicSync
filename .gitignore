@@ -90,5 +90,7 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# current repo files
 discord_token.json
-secrets.env
+*.env
