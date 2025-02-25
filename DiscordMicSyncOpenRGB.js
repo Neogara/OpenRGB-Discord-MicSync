@@ -1,5 +1,5 @@
 require('dotenv').config({path: './secrets.env'});
-const {RPClient, RPCEvent} = require('rpcord');
+const {RPClient, RPCEvent} = require('@corwinjs/rpcord');
 const OpenRGB = require('openrgb-sdk');
 const http = require('http');
 const axios = require('axios');
@@ -191,31 +191,27 @@ async function connectOpenRGB() {
  * и отправляет обновлённый массив цветов обратно на сервер OpenRGB.
  *
  * @param {OpenRGB.Client} openRGBClient - Клиент openrgb-sdk.
- * @param {number} deviceId - ID устройства (например, клавиатура).
+ * @param {number} deviceId - ID устройства (например, клавиатура == 0).
  * @param {Array} colors - Массив, содержащий пары [LED_index, {red, green, blue}].
  */
 async function setKeyColor(openRGBClient, deviceId, colors) {
     try {
         const device = await openRGBClient.getControllerData(deviceId);
         let leds = device.colors;
+
         if (!leds || leds.length === 0) {
-            // Если информация о цветах отсутствует, создаём массив нужной длины
-            leds = new Array(device.ledCount).fill({red: 0, green: 0, blue: 0});
-        } else {
-            leds = [...leds]; // Создаём копию массива
+            console.log(`Устройство ${device.name} не имеет LED`);
+            return;
         }
 
         for (let i = 0; i < colors.length; i++) {
             const ledIndex = colors[i][0];
             const color = colors[i][1];
-            leds[ledIndex] = color;
-
+            await openRGBClient.updateSingleLed(deviceId, ledIndex, color);
             console.log(
                 `LED ${ledIndex} на устройстве ${device.name} установлен в цвет [${color.red}, ${color.green}, ${color.blue}]`
             );
         }
-
-        await openRGBClient.updateLeds(deviceId, leds);
     } catch (error) {
         console.error('Ошибка при обновлении LED:', error);
     }
@@ -240,15 +236,16 @@ async function startRpc(token, openRGBClient) {
         console.error('Ошибка RPC:', error);
     });
 
-    try {
-        await rpc.connect();
-    } catch (error) {
-        if (error.message.includes("Failed to find Discord IPC")) {
-            console.error("Ошибка подключения: Discord не запущен или не поддерживает IPC. Пожалуйста, запустите клиент Discord и повторите попытку.");
-        } else {
-            console.error("Ошибка подключения к Discord RPC:", error.message);
+    while (true) {
+        try {
+            await rpc.connect();
+            console.log('Подключено к Discord RPC.');
+            break;
+        } catch (error) {
+            console.error('Ошибка подключения к Discord RPC:', error.message);
+            console.log(`Повторное подключение через ${config.RECONNECT_INTERVAL} мс...`);
+            await new Promise((resolve) => setTimeout(resolve, config.RECONNECT_INTERVAL));
         }
-        return null; // Прерываем выполнение, если не удалось подключиться.
     }
 
     try {

@@ -4,7 +4,7 @@
   "main": "DiscordMicSyncOpenRGB.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start":"node --no-deprecation DiscordMicSyncOpenRGB.js "
+    "start": "title DiscordMicSyncOpenRGB && node --no-deprecation DiscordMicSyncOpenRGB.js "
   },
   "keywords": [],
   "author": "",
@@ -12,12 +12,12 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
+    "@corwinjs/rpcord": "^1.2.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "open": "^10.1.0",
     "openrgb-sdk": "^0.4.1",
     "punycode": "^2.3.1",
-    "rpcord": "^1.0.7",
     "ws": "^8.18.1"
   }
 }
