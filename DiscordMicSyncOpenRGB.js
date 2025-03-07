@@ -13,6 +13,7 @@ const config = {
     CLIENT_SECRET: process.env.CLIENT_SECRET,
 
     REDIRECT_URI: 'http://localhost:3000',
+    AUTH_SERVER_PORT: 3000,
     TOKEN_FILE: path.join(__dirname, 'discord_token.json'), // Файл с токеном Discord
 
     RECONNECT_INTERVAL: 5000,            // Интервал переподключения в мс
@@ -63,12 +64,20 @@ async function loadToken() {
  */
 async function saveToken(tokenData) {
     try {
+        tokenData["saved_at"] = Date.now();
         await fs.writeFile(config.TOKEN_FILE, JSON.stringify(tokenData, null, 2), 'utf8');
         console.log('Токен сохранён.');
     } catch (error) {
         console.error('Ошибка сохранения токена:', error.message);
     }
 }
+
+/**
+ * Проверка токена на истечение срока действия.
+ */
+function isTokenExpired(tokenData) {
+    return Date.now() > tokenData.saved_at + tokenData.expires_in * 1000;
+  }
 
 /**
  * Обмен кода авторизации на токен через Discord API.
@@ -295,7 +304,7 @@ async function main() {
 
     // Загружаем или получаем токен Discord
     let tokenData = await loadToken();
-    if (!tokenData || tokenData.expires_at <= Date.now()) {
+    if (!tokenData || isTokenExpired(tokenData)) {
         console.log('Нет действительного токена, запускаем авторизацию...');
         const accessToken = await startAuthServer();
         tokenData = {access_token: accessToken};
