@@ -1,10 +1,9 @@
 {
-  "name": "DiscordMicSyncOpenRGB",
+  "name": "discordapp_openrgb_mic_refactor",
   "version": "1.0.0",
-  "main": "DiscordMicSyncOpenRGB.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "title DiscordMicSyncOpenRGB && node --no-deprecation DiscordMicSyncOpenRGB.js "
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -12,12 +11,10 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
-    "@corwinjs/rpcord": "^1.2.0",
-    "axios": "^1.7.9",
+    "@corwinjs/rpcord": "^1.2.2",
+    "axios": "^1.8.3",
     "dotenv": "^16.4.7",
     "open": "^10.1.0",
-    "openrgb-sdk": "^0.4.1",
-    "punycode": "^2.3.1",
-    "ws": "^8.18.1"
+    "openrgb-sdk": "^0.5.2"
   }
 }
