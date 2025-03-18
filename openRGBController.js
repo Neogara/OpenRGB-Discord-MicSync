@@ -3,7 +3,6 @@ const OpenRGB = require('openrgb-sdk');
 const config = require('./config');
 
 async function connectOpenRGB() {
-  console.log(config)
   const client = new OpenRGB.Client('DiscordAppOpenRGB', { host: config.OPENRGB_HOST, port: config.OPENRGB_PORT });
   while (true) {
     try {
