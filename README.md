@@ -25,7 +25,7 @@
 ### 1. Клонируй репозиторий
 
 ```bash
-git clone https://github.com/yourusername/discord-mic-openrgb-sync.git
+git clone https://github.com/Neogara/OpenRGB-Discord-MicSync.git
 cd discord-mic-openrgb-sync
 ```
 
