@@ -56,7 +56,7 @@ npm install
 
 1. Open the [Discord Developer Portal](https://discord.com/developers/applications) → **New Application**.
 2. On the **OAuth2** page, copy the **Client ID** and **Client Secret**.
-3. Add this exact URL to the **Redirects** field — it must match the string in `config.js`:
+3. In the **Redirects** block, add the URL that exactly matches the string in `config.js`:
 
    ```
    http://localhost:3000
@@ -64,7 +64,16 @@ npm install
 
    > Port `3000` is reserved for the OAuth2 callback and cannot be changed in code. Discord rejects the authorization if the URL differs.
 
-4. Create a `secrets.env` file in the project root:
+4. Below, in the **OAuth2 URL Generator** block → **Scopes**, tick exactly two scopes:
+
+   - `rpc`
+   - `rpc.voice.read`
+
+   ![OAuth2 scopes in the Discord Developer Portal](docs/screenshots/discord-scopes.png)
+
+   > **This is required.** Without `rpc` and `rpc.voice.read` ticked, Discord grants no access to the voice calls — the authorization will succeed, but nothing will be able to read mute and deafen. No other scopes are needed.
+
+5. Create a `secrets.env` file in the project root:
 
    ```bash
    CLIENT_ID=your_client_id
@@ -178,6 +187,7 @@ The log is available in the **«Журнал»** block on the settings page and 
 |---|---|---|
 | `Discord: нет (…)`, badge never changes | Discord is not running or authorization was not completed | Start Discord. If the token expired or was deleted — restart the application and the browser will open the authorization flow again |
 | Discord runs Canary/PTR | Different IPC pipe | Set `DISCORD_PIPE` (e.g. `discord-ipc-5`) |
+| Discord connects but mute is not tracked | The `rpc` and `rpc.voice.read` scopes are not ticked in the Developer Portal | Open your app in the [Developer Portal](https://discord.com/developers/applications) → **OAuth2** → **OAuth2 URL Generator** → **Scopes**, tick `rpc` and `rpc.voice.read`, then delete `discord_token.json` and restart the application to re-authorize |
 | `OpenRGB: не подключён` (not connected) | SDK Server is off or the port differs | Enable **Enable SDK Server** in OpenRGB and check the host/port on the settings page |
 | The wrong keys light up | Wrong LED index | Turn on 💡 and adjust the index until the key glows yellow |
 | Settings page does not open | The port is taken by another app | The port is printed to the log on start. Set another one in the «Приложение» block and restart the application |
