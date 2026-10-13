@@ -64,8 +64,14 @@ function readJson(req) {
     });
 }
 
+/* Имена страниц без расширения -> файлы (ссылка в адресной строке) */
+const PAGE_ROUTES = {
+    '/': 'index.html',
+    '/auth-success': 'auth-success.html'
+};
+
 function serveStatic(res, pathname) {
-    const rel = pathname === '/' ? 'index.html' : pathname.slice(1);
+    const rel = PAGE_ROUTES[pathname] || pathname.slice(1);
     const file = path.normalize(path.join(PUBLIC_DIR, rel));
 
     if (!file.startsWith(PUBLIC_DIR)) {

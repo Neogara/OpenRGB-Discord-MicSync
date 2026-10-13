@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Авторизация Discord — OpenRGB ↔ MicSync</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-main { max-width: 560px; }
+    .auth-card { text-align: center; }
+
+    /* Пульсирующее «подключаемся»: два вращающихся кольца + ядро */
+    .orb {
+      --ring: var(--accent);
+      width: 88px;
+      height: 88px;
+      margin: 4px auto 14px;
+      position: relative;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #2b3247, var(--card));
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .orb::before,
+    .orb::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: var(--ring);
+      animation: orb-spin 1.4s linear infinite;
+    }
+    .orb::after {
+      inset: 13px;
+      border-top-color: transparent;
+      border-bottom-color: var(--ring);
+      animation-duration: 2.2s;
+      animation-direction: reverse;
+    }
+    .orb-core {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--ring);
+      box-shadow: 0 0 14px var(--ring);
+      animation: orb-core 1.6s ease-in-out infinite;
+    }
+    .orb.ready { --ring: var(--ok); }
+    .orb.ready::before,
+    .orb.ready::after { animation-play-state: paused; }
+    .orb.fail { --ring: var(--bad); }
+    .orb.fail::before,
+    .orb.fail::after { animation-play-state: paused; }
+
+    @keyframes orb-spin { to { transform: rotate(360deg); } }
+    @keyframes orb-core {
+      0%, 100% { transform: scale(1); opacity: .8; }
+      50% { transform: scale(1.4); opacity: 1; }
+    }
+
+    .auth-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+
+    /* Чек-лист шагов */
+    .steps {
+      list-style: none;
+      margin: 16px 0 6px;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+      text-align: left;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      background: #232733;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .step .mark {
+      flex: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      background: #2a3040;
+      color: var(--muted);
+    }
+    .step.done { color: var(--text); }
+    .step.done .mark {
+      background: rgba(62, 207, 111, .15);
+      color: var(--ok);
+      border: 1px solid rgba(62, 207, 111, .5);
+    }
+    .step.fail { color: var(--bad); }
+    .step.fail .mark {
+      background: rgba(255, 93, 93, .15);
+      color: var(--bad);
+      border: 1px solid rgba(255, 93, 93, .5);
+    }
+    .step.warn { color: #ffc800; }
+    .step.warn .mark {
+      background: rgba(255, 200, 0, .15);
+      color: #ffc800;
+      border: 1px solid rgba(255, 200, 0, .5);
+    }
+    .step.active .mark { animation: mark-pulse 1.2s ease-in-out infinite; }
+    @keyframes mark-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(79, 140, 255, .55); }
+      50% { box-shadow: 0 0 0 6px rgba(79, 140, 255, 0); }
+    }
+
+    .actions { justify-content: center; margin-top: 16px; }
+    #close-hint { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OpenRGB ↔ Discord MicSync</h1>
+    <div class="badges">
+      <span id="badge-state" class="badge badge-muted">Авторизация: …</span>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <section class="card auth-card">
+      <div class="orb" id="orb"><span class="orb-core"></span></div>
+      <div class="auth-title" id="auth-title">Подключаемся к серверам Discord…</div>
+
+      <ul class="steps" id="steps">
+        <li class="step done" id="step-token"><span class="mark">✓</span>Токен сохранён</li>
+        <li class="step active" id="step-discord"><span class="mark">…</span>Подключаемся к Discord</li>
+        <li class="step" id="step-done"><span class="mark">○</span>Готово</li>
+      </ul>
+
+      <div class="hint" id="note"></div>
+
+      <div class="row actions">
+        <button id="btn-settings" class="primary" type="button">Перейти в настройки</button>
+        <button id="btn-close" type="button">Закрыть страницу</button>
+      </div>
+      <div class="hint hidden" id="close-hint">Браузер не разрешил закрыть вкладку — нажмите Ctrl+W</div>
+    </section>
+  </main>
+
+  <script src="auth-success.js"></script>
+</body>
+</html>
