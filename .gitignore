@@ -93,4 +93,5 @@ Thumbs.db
 
 # current repo files
 discord_token.json
+settings.json
 *.env

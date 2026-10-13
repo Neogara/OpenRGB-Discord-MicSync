@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenRGB ↔ Discord MicSync — настройки</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>OpenRGB ↔ Discord MicSync</h1>
+    <div class="badges">
+      <span id="badge-discord" class="badge badge-muted">Discord: …</span>
+      <span id="badge-openrgb" class="badge badge-muted">OpenRGB: …</span>
+      <span id="badge-mic" class="badge badge-muted">Микрофон: …</span>
+      <span id="badge-sound" class="badge badge-muted">Звук: …</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Приложение</h2>
+
+      <label class="check">
+        <input type="checkbox" id="autostart">
+        Загружать вместе с Windows (запуск скрытым окном)
+      </label>
+      <label class="check">
+        <input type="checkbox" id="open-on-start">
+        Открывать эту страницу при старте
+      </label>
+
+      <div class="row">
+        <label>Порт страницы
+          <input type="number" id="webui-port" min="1" max="65535" class="num">
+        </label>
+        <span class="hint">порт применяется после перезапуска приложения</span>
+      </div>
+
+      <div class="row">
+        <label>OpenRGB host
+          <input type="text" id="openrgb-host" class="text">
+        </label>
+        <label>порт
+          <input type="number" id="openrgb-port" min="1" max="65535" class="num">
+        </label>
+      </div>
+
+      <div class="row">
+        <button id="btn-save" type="button" class="primary">Сохранить и применить</button>
+        <span id="save-status" class="hint"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Устройство OpenRGB</h2>
+      <div class="row">
+        <select id="device-select"><option>устройства не загружены</option></select>
+        <button id="btn-devices" type="button">Обновить список</button>
+      </div>
+      <div class="hint" id="device-hint"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">LED-кнопки
+        <button id="btn-highlight" class="bulb" type="button" aria-pressed="false"
+          title="Подсветить LED-кнопки жёлтым, чтобы найти их на клавиатуре. Режим включён — выбранные индексы горят жёлтым и следуют за правкой индексов; нажмите ещё раз, чтобы выключить и вернуть исходные цвета.">💡</button>
+      </h2>
+
+      <div class="led-row">
+        <span class="led-title">Микрофон</span>
+        <label>LED-индекс
+          <input type="number" id="mic-index" min="0" max="1023" class="num">
+        </label>
+        <label class="color-label">OFF
+          <input type="color" id="mic-muted-color" value="#00ff00" title="Цвет, когда микрофон выключен (мьют)">
+        </label>
+        <label class="color-label">ON
+          <input type="color" id="mic-unmuted-color" value="#ff0000" title="Цвет, когда микрофон включён">
+        </label>
+      </div>
+
+      <div class="led-row">
+        <span class="led-title">Звук</span>
+        <label>LED-индекс
+          <input type="number" id="sound-index" min="0" max="1023" class="num">
+        </label>
+        <label class="color-label">OFF
+          <input type="color" id="sound-deaf-color" value="#00ff00" title="Цвет, когда звук заглушён">
+        </label>
+        <label class="color-label">ON
+          <input type="color" id="sound-undeaf-color" value="#ff0000" title="Цвет, когда звук включён">
+        </label>
+      </div>
+
+      <div class="hint" id="led-hint"></div>
+      <div class="hint">Нажмите 💡 в заголовке — выбранные LED-кнопки загорятся жёлтым (индексы можно править прямо в этом режиме, подсветка переезжает на новый индекс, а прошлый возвращает свой цвет). Выключение подсветки возвращает исходный цвет каждой кнопки.</div>
+    </section>
+
+    <section class="card">
+      <h2>Журнал <button id="btn-logs" type="button" class="small">обновить</button></h2>
+      <pre id="log-view" class="log-view">загрузка…</pre>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

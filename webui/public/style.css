@@ -1,0 +1,205 @@
+:root {
+  --bg: #12141a;
+  --card: #1b1e27;
+  --card-border: #2a2f3d;
+  --text: #e6e8ee;
+  --muted: #9aa2b5;
+  --accent: #4f8cff;
+  --ok: #3ecf6f;
+  --bad: #ff5d5d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--card-border);
+  background: var(--card);
+}
+
+h1 { font-size: 20px; margin: 0; font-weight: 600; }
+h2 { font-size: 15px; margin: 0 0 14px; font-weight: 600; }
+
+/* Заголовок блока с кнопкой-лампочкой */
+.card-title { display: flex; align-items: center; gap: 10px; }
+
+button.bulb {
+  padding: 4px 10px;
+  font-size: 16px;
+  line-height: 1;
+  background: #232733;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  filter: grayscale(1) opacity(.65);
+  transition: filter .15s, background .15s, border-color .15s, box-shadow .15s;
+}
+button.bulb:hover { filter: none; border-color: var(--accent); }
+/* Режим подсветки включён — сама кнопка горит жёлтым */
+button.bulb.active {
+  background: rgba(255, 200, 0, .16);
+  border-color: #ffc800;
+  filter: none;
+  box-shadow: 0 0 10px rgba(255, 200, 0, .45);
+  animation: bulb-pulse 1.6s ease-in-out infinite;
+}
+@keyframes bulb-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 200, 0, .35); }
+  50% { box-shadow: 0 0 16px rgba(255, 200, 0, .7); }
+}
+
+.badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  border: 1px solid var(--card-border);
+  background: #232733;
+  color: var(--muted);
+}
+.badge-ok { color: var(--ok); border-color: rgba(62, 207, 111, .4); }
+.badge-bad { color: var(--bad); border-color: rgba(255, 93, 93, .4); }
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.led-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--card-border);
+}
+.led-row:last-of-type { border-bottom: none; }
+
+.led-title { min-width: 90px; font-weight: 600; }
+
+label { font-size: 14px; color: var(--muted); }
+
+input[type="color"] {
+  width: 44px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: #232733;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.color-label { display: inline-flex; align-items: center; gap: 6px; }
+
+input.num {
+  width: 84px;
+  background: #232733;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+input.text {
+  width: 200px;
+  background: #232733;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+select {
+  flex: 1;
+  min-width: 260px;
+  background: #232733;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+button {
+  background: #2a3040;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary:hover { filter: brightness(1.1); }
+button.small { padding: 3px 10px; font-size: 12px; margin-left: 10px; }
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.hint { color: var(--muted); font-size: 13px; }
+.hint.error { color: var(--bad); }
+
+.log-view {
+  margin: 0;
+  max-height: 260px;
+  overflow: auto;
+  background: #101218;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 10px;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #232733;
+  border: 1px solid var(--card-border);
+  font-size: 14px;
+  max-width: 340px;
+}
+.toast.ok { border-color: rgba(62, 207, 111, .5); }
+.toast.bad { border-color: rgba(255, 93, 93, .5); }
+.hidden { display: none; }
